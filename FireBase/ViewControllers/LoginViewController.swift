@@ -7,6 +7,9 @@ class LoginViewController: UIViewController {
     let passwordTextField = UITextField()
     let loginButton = UIButton(type: .system)
     let registerButton = UIButton(type: .system)
+    
+    let loadingIndicator = UIActivityIndicatorView(style: .medium)
+    let stateLabel = UILabel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -15,7 +18,6 @@ class LoginViewController: UIViewController {
     }
 
     func setupUI() {
-       
         emailTextField.placeholder = "Email"
         emailTextField.borderStyle = .roundedRect
         emailTextField.autocapitalizationType = .none
@@ -27,7 +29,6 @@ class LoginViewController: UIViewController {
         emailTextField.layer.shadowRadius = 4
         emailTextField.translatesAutoresizingMaskIntoConstraints = false
         
-       
         passwordTextField.placeholder = "Password"
         passwordTextField.borderStyle = .roundedRect
         passwordTextField.isSecureTextEntry = true
@@ -39,7 +40,6 @@ class LoginViewController: UIViewController {
         passwordTextField.layer.shadowRadius = 4
         passwordTextField.translatesAutoresizingMaskIntoConstraints = false
         
-       
         loginButton.setTitle("Login", for: .normal)
         loginButton.backgroundColor = UIColor.systemBlue
         loginButton.setTitleColor(.white, for: .normal)
@@ -51,48 +51,80 @@ class LoginViewController: UIViewController {
         loginButton.addTarget(self, action: #selector(handleLogin), for: .touchUpInside)
         loginButton.translatesAutoresizingMaskIntoConstraints = false
         
-        
         registerButton.setTitle("Register", for: .normal)
         registerButton.setTitleColor(.systemBlue, for: .normal)
         registerButton.addTarget(self, action: #selector(handleRegister), for: .touchUpInside)
         registerButton.translatesAutoresizingMaskIntoConstraints = false
         
-     
+        loadingIndicator.hidesWhenStopped = true
+        loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        stateLabel.textAlignment = .center
+        stateLabel.textColor = .systemRed
+        stateLabel.numberOfLines = 0
+        stateLabel.isHidden = true
+        stateLabel.translatesAutoresizingMaskIntoConstraints = false
+        
         let stackView = UIStackView(arrangedSubviews: [emailTextField, passwordTextField, loginButton, registerButton])
         stackView.axis = .vertical
         stackView.spacing = 20
         stackView.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(stackView)
+        view.addSubview(loadingIndicator)
+        view.addSubview(stateLabel)
+        
         NSLayoutConstraint.activate([
-            stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            stackView.widthAnchor.constraint(equalToConstant: 300)
+            stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stackView.widthAnchor.constraint(equalToConstant: 300),
+            
+            loadingIndicator.topAnchor.constraint(equalTo: registerButton.bottomAnchor, constant: 20),
+            loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            stateLabel.topAnchor.constraint(equalTo: loadingIndicator.bottomAnchor, constant: 20),
+            stateLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stateLabel.widthAnchor.constraint(equalToConstant: 300),
         ])
     }
 
     @objc func handleLogin() {
-        guard let email = emailTextField.text, let password = passwordTextField.text else { return }
+        guard let email = emailTextField.text, !email.isEmpty,
+              let password = passwordTextField.text, !password.isEmpty else {
+            stateLabel.text = "Пожалуйста, заполните все поля."
+            stateLabel.textColor = .systemOrange
+            stateLabel.isHidden = false
+            return
+        }
         
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
-            if let error = error {
-                print("Ошибка авторизации: \(error.localizedDescription)")
-                return
+        loadingIndicator.startAnimating()
+        stateLabel.isHidden = true
+        
+        Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
+            DispatchQueue.main.async {
+                self?.loadingIndicator.stopAnimating()
+                
+                if let error = error {
+                    self?.stateLabel.text = "Ошибка входа: \(error.localizedDescription)"
+                    self?.stateLabel.textColor = .systemRed
+                    self?.stateLabel.isHidden = false
+                    return
+                }
+                
+                print("Успешный вход: \(email)")
+                self?.stateLabel.isHidden = true
+                
+                let tasksVC = TasksViewController()
+                let navController = UINavigationController(rootViewController: tasksVC)
+                navController.modalPresentationStyle = .fullScreen
+                self?.present(navController, animated: true, completion: nil)
             }
-            print("Успешный вход: \(result?.user.email ?? "")")
-            
-            
-            let tasksVC = TasksViewController()
-            let navController = UINavigationController(rootViewController: tasksVC)
-            navController.modalPresentationStyle = .fullScreen
-            self.present(navController, animated: true, completion: nil)
         }
     }
-
-
+    
     @objc func handleRegister() {
         let registerVC = RegisterViewController()
         registerVC.modalPresentationStyle = .fullScreen
-        self.present(registerVC, animated: true, completion: nil)
+        present(registerVC, animated: true, completion: nil)
     }
 }
