@@ -10,6 +10,20 @@
 		696EAB362D6CDB9B00B9A487 /* Pods_FireBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52FF50B552685B56DD4F474C /* Pods_FireBase.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildRule section */
+		69FEA2BF2DEE592F0036A963 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			fileType = pattern.proxy;
+			inputFiles = (
+			);
+			isEditable = 1;
+			outputFiles = (
+			);
+			script = "# Type a script or drag a script file from your workspace to insert its path.\n";
+		};
+/* End PBXBuildRule section */
+
 /* Begin PBXContainerItemProxy section */
 		69051C072D6CC9B400759B62 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -133,6 +147,7 @@
 				AC982D28080A4CD0DCCC336D /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
+				69FEA2BF2DEE592F0036A963 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -462,6 +477,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FireBase/Preview Content\"";
+				DEVELOPMENT_TEAM = 5NU578RLMJ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -491,6 +507,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FireBase/Preview Content\"";
+				DEVELOPMENT_TEAM = 5NU578RLMJ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

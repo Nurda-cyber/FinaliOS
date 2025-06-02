@@ -100,24 +100,26 @@ class LoginViewController: UIViewController {
         loadingIndicator.startAnimating()
         stateLabel.isHidden = true
         
-        Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
-            DispatchQueue.main.async {
-                self?.loadingIndicator.stopAnimating()
-                
-                if let error = error {
-                    self?.stateLabel.text = "Ошибка входа: \(error.localizedDescription)"
-                    self?.stateLabel.textColor = .systemRed
-                    self?.stateLabel.isHidden = false
-                    return
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            Auth.auth().signIn(withEmail: email, password: password) { result, error in
+                DispatchQueue.main.async {
+                    self?.loadingIndicator.stopAnimating()
+                    
+                    if let error = error {
+                        self?.stateLabel.text = "Ошибка входа: \(error.localizedDescription)"
+                        self?.stateLabel.textColor = .systemRed
+                        self?.stateLabel.isHidden = false
+                        return
+                    }
+                    
+                    print("Успешный вход: \(email)")
+                    self?.stateLabel.isHidden = true
+                    
+                    let tasksVC = TasksViewController()
+                    let navController = UINavigationController(rootViewController: tasksVC)
+                    navController.modalPresentationStyle = .fullScreen
+                    self?.present(navController, animated: true, completion: nil)
                 }
-                
-                print("Успешный вход: \(email)")
-                self?.stateLabel.isHidden = true
-                
-                let tasksVC = TasksViewController()
-                let navController = UINavigationController(rootViewController: tasksVC)
-                navController.modalPresentationStyle = .fullScreen
-                self?.present(navController, animated: true, completion: nil)
             }
         }
     }
