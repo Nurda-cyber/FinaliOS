@@ -32,5 +32,5 @@ jobs:
           xcodebuild -workspace FireBase.xcworkspace \
                      -scheme FireBase \
                      -sdk iphonesimulator \
-                     -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+                     -destination 'platform=iOS Simulator,name=iPhone 14' \
                      clean build
